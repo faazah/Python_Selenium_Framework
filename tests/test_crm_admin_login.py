@@ -1,5 +1,6 @@
 from selenium import webdriver
 
+from config.environment import Environment
 from pages.crm_admin_login import AdminLoginPage
 
 
@@ -8,28 +9,33 @@ driver.maximize_window()
 driver.implicitly_wait(5)
 
 ##---TEST DATA
-base_url="http://49.249.28.218:8081/TestServer/Build/Small_CRM/admin/"
-
-valid_username="admin"
-valid_password="admin"
-
 invalid_username="admin123"
 invalid_password="admin123"
 
 class TestAdminLogin:
+    """
+    Test class for login functionality against Small CRM app.
+    """
 
     def test_successful_login(self):
+        """
+        Test Case: Verify successful login using valid Credentials from config.yaml file
+        """
         print("Testing successful login")
 
-        ##---Initializing Login Page
+        ##---Initializing Login Page and variables
         login_pg = AdminLoginPage(driver)
+        env = Environment('practice')
+        base_url = env.get_base_url()
+        username = env.get_username()
+        password = env.get_password()
 
         print(f"Navigating to the base_url {base_url}")
         login_pg.navigate_to(base_url)
         assert login_pg.is_element_displayed(login_pg.ADMIN_LOGIN_PAGE_HEADER), "Login Page did not load properly"
 
         print(f"Logging in with Valid Credentials")
-        login_pg.admin_login(valid_username, valid_password)
+        login_pg.admin_login(username, password)
         assert login_pg.is_element_displayed(login_pg.DASHBOARD_PAGE_HEADER)
 
         print(f"Verifying successful login and Page Title")
@@ -41,10 +47,15 @@ class TestAdminLogin:
 
 
     def test_invalid_login(self):
+        """
+        Test Case: Verify invalid login using invalid Credentials.
+        """
         print("Testing invalid login")
 
-        ##---Initializing Login Page
+        ##---Initializing Login Page and Variables
         login_pg = AdminLoginPage(driver)
+        env = Environment('practice')
+        base_url = env.get_base_url()
 
         print(f"Navigating to the base_url {base_url}")
         login_pg.navigate_to(base_url)
